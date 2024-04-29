@@ -14,9 +14,17 @@ from netter.attribute import __url_home__
 from netter.attribute import __version__
 
 
-def read_requirements(path: str):
-    with open(path, "r", encoding="utf-8") as rhdl:
-        return rhdl.read().splitlines()
+def all_requirements():
+
+    def read_requirements(path: str):
+        with open(path, "r", encoding="utf-8") as rhdl:
+            return rhdl.read().splitlines()
+
+    requirements = read_requirements("requirements.txt")
+    requirements.extend(['wmi;platform_system=="Windows"'])
+    # requirements.extend(['psutil;platform_system=="Linux"'])
+    # requirements.extend(['psutil;platform_system=="Darwin"'])  # macOS
+    return requirements
 
 
 setup(
@@ -30,4 +38,4 @@ setup(
                   "Bug Tracker": __url_bugs__,
                   "Documentation": __url_docs__},
     packages=find_packages(include=["netter*"], exclude=["tests"]),
-    install_requires=read_requirements("requirements.txt"))
+    install_requires=all_requirements())

@@ -1,1 +1,2 @@
 xarg-python >= 1.5
+psutil

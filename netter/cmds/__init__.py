@@ -8,9 +8,10 @@ from xarg import argp
 from xarg import commands
 from xarg import run_command
 
-from .attribute import __description__
-from .attribute import __url_home__
-from .attribute import __version__
+from ..attribute import __description__
+from ..attribute import __url_home__
+from ..attribute import __version__
+from .domain import add_cmd_nameserver
 
 
 @add_command("netter")
@@ -18,9 +19,8 @@ def add_cmd(_arg: argp):
     pass
 
 
-@run_command(add_cmd)
+@run_command(add_cmd, add_cmd_nameserver)
 def run_cmd(cmds: commands) -> int:
-    cmds.stdout("Hello, world!")
     return 0
 
 
