@@ -11,3 +11,11 @@ from .platform import is_linux
 from .platform import is_macos
 from .platform import is_unix
 from .platform import is_windows
+from .prober import EXAMPLE_DOMAIN
+from .prober import IPAddress
+from .prober import PING_MAX_TO
+from .prober import PING_MIN_TO
+from .prober import RESOLVE_MAX_TO
+from .prober import RESOLVE_MIN_TO
+from .prober import dnsprobe
+from .prober import ping

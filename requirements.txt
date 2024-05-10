@@ -1,2 +1,4 @@
-xarg-python >= 1.5
+xarg-python >= 1.5.1
+dnspython
 psutil
+ping3

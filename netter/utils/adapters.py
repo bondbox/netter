@@ -6,7 +6,6 @@ from typing import Iterable
 from typing import Iterator
 from typing import Optional
 from typing import Tuple
-from typing import TypeAlias
 
 from psutil import AF_LINK
 from psutil import net_if_addrs
@@ -22,8 +21,8 @@ if is_windows():
     import wmi
 
 
-ADDRESSES: TypeAlias = Tuple[str, ...]
-NAMESERVERS: TypeAlias = ADDRESSES
+ADDRESSES = Tuple[str, ...]
+NAMESERVERS = ADDRESSES
 
 
 class Context:
