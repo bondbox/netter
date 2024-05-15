@@ -103,12 +103,13 @@ def run_cmd_query(cmds: commands) -> int:
             name=f"ping {querys.name}",
             header=["ip_address", "ping(ms)", "nameservers"])
         for _address, _nameservers in addresses.items():
-            description: str = "\n".join(_nameservers)
+            description: str = "\n".join(sorted(list(_nameservers)))
             try:
                 delay = ping(address=_address, timeout=PING_MAX_TO)
                 pings.append([_address, f"{delay * 1000:.2f}", description])
             except HostUnknown:
                 pings.append([_address, "Host Unknown", description])
+        pings.sort(key=lambda row: row[pings.column_no("ping(ms)")])
         cmds.stdout(f"\nping {querys.name}")
         cmds.stdout(tabulate(pings, fmt="simple_grid"))
     return 0
