@@ -60,19 +60,14 @@ def query_domain_name(domain: str, nameservers: Iterable[str],
     return table
 
 
-def add_domain_and_nameserver(_arg: argp):
-    _arg.add_argument("--domain", nargs=1, metavar="NAME",
-                      default=[EXAMPLE_DOMAIN],
-                      help="domain name")
-    _arg.add_argument(dest="nameservers", nargs="*", metavar="NS", default=[],
-                      help="nameserver")
-
-
 @add_command("query", help="query domain name")
 def add_cmd_query(_arg: argp):
     # TODO: add --ipv6 (AAAA)
     # TODO: add --ping (ping ipaddress)
-    add_domain_and_nameserver(_arg)
+    _arg.add_argument(dest="domain", nargs=1, metavar="DOMAIN",
+                      help="domain name for query")
+    _arg.add_argument(dest="nameservers", nargs="*", metavar="NS", default=[],
+                      help="all extended nameservers")
 
 
 @run_command(add_cmd_query)
@@ -119,9 +114,12 @@ def run_cmd_query(cmds: commands) -> int:
     return 0
 
 
-@ add_command("probe", help="ping and resolve")
+@ add_command("probe", help="ping nameserver and resolve domain name")
 def add_cmd_probe(_arg: argp):
-    add_domain_and_nameserver(_arg)
+    _arg.add_argument("--domain", nargs=1, metavar="NAME",
+                      default=[EXAMPLE_DOMAIN], help="domain name for resolve")
+    _arg.add_argument(dest="nameservers", nargs="*", metavar="NS", default=[],
+                      help="all extended nameservers")
 
 
 @ run_command(add_cmd_probe)
