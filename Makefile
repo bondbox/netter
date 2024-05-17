@@ -37,3 +37,7 @@ prepare-test:
 	pip3 install --upgrade pylint flake8 pytest
 test: prepare-test pylint flake8 pytest
 test-clean: pytest-clean
+
+
+query-public-ip:
+	echo "$$(date '+%F %T') public ip $$(netter public-ip --all --verbose --debug --log log/netter.log)" >> log/public-ip.log
