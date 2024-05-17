@@ -11,6 +11,7 @@ from xarg import run_command
 from ..attribute import __description__
 from ..attribute import __url_home__
 from ..attribute import __version__
+from .address import add_cmd_public_ip
 from .domain import add_cmd_nameserver
 
 
@@ -19,7 +20,7 @@ def add_cmd(_arg: argp):
     pass
 
 
-@run_command(add_cmd, add_cmd_nameserver)
+@run_command(add_cmd, add_cmd_public_ip, add_cmd_nameserver)
 def run_cmd(cmds: commands) -> int:
     return 0
 

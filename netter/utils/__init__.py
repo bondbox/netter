@@ -19,3 +19,4 @@ from .prober import RESOLVE_MAX_TO
 from .prober import RESOLVE_MIN_TO
 from .prober import dnsprobe
 from .prober import ping
+from .prober import public_ip
