@@ -111,7 +111,7 @@ class dnsprobe():
     '''
 
     def __init__(self, address: IPAddress):
-        assert isinstance(address, IPAddress), \
+        assert isinstance(address, (IPv4Address, IPv6Address)), \
             f"unexpected type: {type(address)}"
         resolver: Resolver = Resolver(configure=False)
         resolver.nameservers = [str(address)]
