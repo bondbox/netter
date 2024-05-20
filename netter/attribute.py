@@ -3,7 +3,7 @@
 from urllib.parse import urljoin
 
 __project__ = "netter"
-__version__ = "0.1.alpha.1"
+__version__ = "0.1"
 __description__ = "A network toolkit."
 __url_home__ = "https://github.com/bondbox/netter/"
 __url_code__ = __url_home__
