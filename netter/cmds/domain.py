@@ -31,7 +31,7 @@ from ..utils import ping
 
 
 def query_domain_name(domain: str, nameservers: Iterable[str],
-                      enable_aaaa: bool = False) -> form:
+                      enable_ipv6: bool = False) -> form:
     title: List[str] = ["nameserver", "type", "answer"]
     table: form[str, Union[str, Answer]] = form(name=domain, header=title)
 
@@ -54,7 +54,7 @@ def query_domain_name(domain: str, nameservers: Iterable[str],
     for nameserver in nameservers:
         prober: dnsprobe = dnsprobe.from_string(nameserver)
         query(prober, "A")
-        if enable_aaaa:
+        if enable_ipv6:
             query(prober, "AAAA")
 
     return table
@@ -62,8 +62,10 @@ def query_domain_name(domain: str, nameservers: Iterable[str],
 
 @add_command("query", help="query domain name")
 def add_cmd_query(_arg: argp):
-    # TODO: add --ipv6 (AAAA)
-    # TODO: add --ping (ping ipaddress)
+    _arg.add_argument("-6", dest="enable_ipv6", action="store_true",
+                      help="query IPv6 address(AAAA record)")
+    _arg.add_argument("--ping", action="store_true",
+                      help="ping the IP address of domain name")
     _arg.add_argument(dest="domain", nargs=1, metavar="DOMAIN",
                       help="domain name for query")
     _arg.add_argument(dest="nameservers", nargs="*", metavar="NS", default=[],
@@ -75,7 +77,7 @@ def run_cmd_query(cmds: commands) -> int:
     nameservers: List[str] = cmds.args.nameservers
     if len(nameservers) > 0:
         domain = cmds.args.domain[0]
-        querys = query_domain_name(domain, nameservers)
+        querys = query_domain_name(domain, nameservers, cmds.args.enable_ipv6)
         addresses: Dict[str, Set[str]] = {}
 
         addrs: form[str, str] = form(
@@ -96,22 +98,24 @@ def run_cmd_query(cmds: commands) -> int:
             else:
                 mapping["ip_address"] = answer
             addrs.append(addrs.reflection(mapping))
-        cmds.stdout(f"query {querys.name}")
+        if any([cmds.args.ping]):
+            cmds.stdout(f"query {querys.name}")
         cmds.stdout(tabulate(addrs, fmt="simple_grid"))
 
-        pings: form[str, str] = form(
-            name=f"ping {querys.name}",
-            header=["ip_address", "ping(ms)", "nameservers"])
-        for _address, _nameservers in addresses.items():
-            description: str = "\n".join(sorted(list(_nameservers)))
-            try:
-                delay = ping(address=_address, timeout=PING_MAX_TO)
-                pings.append([_address, f"{delay * 1000:.2f}", description])
-            except HostUnknown:
-                pings.append([_address, "Host Unknown", description])
-        pings.sort(key=lambda row: row[pings.column_no("ping(ms)")])
-        cmds.stdout(f"\nping {querys.name}")
-        cmds.stdout(tabulate(pings, fmt="simple_grid"))
+        if cmds.args.ping:
+            pings: form[str, str] = form(
+                name=f"ping {querys.name}",
+                header=["ip_address", "ping(ms)", "nameservers"])
+            for _address, _nameservers in addresses.items():
+                description: str = "\n".join(sorted(list(_nameservers)))
+                try:
+                    delay = ping(address=_address, timeout=PING_MAX_TO)
+                    pings.append([_address, f"{delay*1000:.2f}", description])
+                except HostUnknown:
+                    pings.append([_address, "Host Unknown", description])
+            pings.sort(key=lambda row: row[pings.column_no("ping(ms)")])
+            cmds.stdout(f"\nping {querys.name}")
+            cmds.stdout(tabulate(pings, fmt="simple_grid"))
     return 0
 
 
