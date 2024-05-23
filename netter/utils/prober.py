@@ -8,6 +8,7 @@ from ipaddress import IPv6Address
 from ipaddress import ip_address
 from random import choice
 from random import randint
+import socket
 import time
 from typing import Callable
 from typing import Dict
@@ -54,7 +55,8 @@ class public_ip():
         ident = auto()
         ipify = auto()
         ipinfo = auto()
-        all = ipify | ident | ipinfo
+        cloudflare = auto()
+        all = ipify | ident | ipinfo | cloudflare
 
     def __init__(self, address: Mapping[str, Iterable[str]]):
         self.__addrs: Dict[IPAddress, Tuple[str, ...]] = {
@@ -73,17 +75,26 @@ class public_ip():
     @classmethod
     def query_from_ident(cls) -> Optional[str]:
         response = requests.get("https://ident.me")
-        return response.text.strip() if response.status_code == 200 else None
+        return response.text.strip() if response.ok else None
 
     @classmethod
     def query_from_ipify(cls) -> Optional[str]:
         response = requests.get("https://api64.ipify.org?format=json")
-        return response.json()["ip"] if response.status_code == 200 else None
+        return response.json()["ip"] if response.ok else None
 
     @classmethod
     def query_from_ipinfo(cls) -> Optional[str]:
         response = requests.get("https://ipinfo.io/ip")
-        return response.text.strip() if response.status_code == 200 else None
+        return response.text.strip() if response.ok else None
+
+    @classmethod
+    def query_from_cloudflare(cls) -> Optional[str]:
+        def parse_ip(lines: Iterable[str]) -> Optional[str]:
+            for line in lines:
+                if line.startswith("ip="):
+                    return line.split("=")[1]
+        response = requests.get("https://www.cloudflare.com/cdn-cgi/trace")
+        return parse_ip(response.text.split()) if response.ok else None
 
     @classmethod
     def query(cls, flag: flags = flags.random) -> "public_ip":
@@ -93,6 +104,8 @@ class public_ip():
             cls.flags.ident: (cls.query_from_ident, "https://ident.me"),
             cls.flags.ipify: (cls.query_from_ipify, "https://api64.ipify.org"),
             cls.flags.ipinfo: (cls.query_from_ipinfo, "https://ipinfo.io/ip"),
+            cls.flags.cloudflare: (cls.query_from_cloudflare,
+                                   "https://radar.cloudflare.com/ip"),
         }
         if flag is cls.flags.random:
             flag = choice([f for f in mapping.keys()])

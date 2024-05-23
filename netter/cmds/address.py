@@ -24,7 +24,7 @@ def add_cmd_public_ip(_arg: argp):
 
 @ run_command(add_cmd_public_ip)
 def run_cmd_public_ip(cmds: commands) -> int:
-    query_site = public_ip.flags.random
+    query_site = public_ip.flags.cloudflare
     if cmds.args.all:
         query_site = public_ip.flags.all
     elif cmds.args.ident:
