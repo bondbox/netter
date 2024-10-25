@@ -9,7 +9,7 @@ from xarg import commands
 from xarg import run_command
 
 from ..attribute import __description__
-from ..attribute import __url_home__
+from ..attribute import __urlhome__
 from ..attribute import __version__
 from .address import add_cmd_public_ip
 from .domain import add_cmd_nameserver
@@ -29,4 +29,4 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     cmds = commands()
     cmds.version = __version__
     return cmds.run(root=add_cmd, argv=argv, description=__description__,
-                    epilog=f"For more, please visit {__url_home__}.")
+                    epilog=f"For more, please visit {__urlhome__}.")

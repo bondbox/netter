@@ -1,4 +1,4 @@
-xarg-python >= 1.5.1
+xarg-python >= 1.6.2
 dnspython
 psutil
 ping3

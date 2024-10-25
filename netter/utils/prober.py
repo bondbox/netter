@@ -8,7 +8,6 @@ from ipaddress import IPv6Address
 from ipaddress import ip_address
 from random import choice
 from random import randint
-import socket
 import time
 from typing import Callable
 from typing import Dict
